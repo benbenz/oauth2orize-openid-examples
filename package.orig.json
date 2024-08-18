@@ -1,0 +1,16 @@
+{
+  "name": "oauth2orize-example",
+  "version": "0.0.0",
+  "dependencies": {
+    "connect-ensure-login": "0.1.x",
+    "ejs": "0.7.x",
+    "express": "2.x.x",
+    "oauth2orize": "0.x.x",
+    "oauth2orize-openid": "github:jaredhanson/oauth2orize-openid",
+    "passport": "~0.1.12",
+    "passport-http": "0.2.x",
+    "passport-http-bearer": "0.2.x",
+    "passport-local": "0.1.x",
+    "passport-oauth2-client-password": "0.1.x"
+  }
+}

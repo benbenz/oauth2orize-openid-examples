@@ -9,6 +9,7 @@ var passport = require('passport')
   , db = require('./db')
 
 
+
 /**
  * LocalStrategy
  *

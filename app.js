@@ -8,16 +8,31 @@ var express = require('express')
   , user = require('./user')
   , client = require('./client')
   , util = require('util')
+  , logger = require('morgan') 
+  , cookieParser = require('cookie-parser')
+  , bodyParser = require('body-parser')
+  , session = require('express-session')
+  , errorhandler = require('errorhandler')
   
   
 // Express configuration
   
-var app = express.createServer();
+var app = express() ; //express.createServer();
 app.set('view engine', 'ejs');
-app.use(express.logger());
-app.use(express.cookieParser());
-app.use(express.bodyParser());
-app.use(express.session({ secret: 'keyboard cat' }));
+app.use(logger('combined')); // app.use(express.logger());
+app.use(cookieParser());//app.use(express.cookieParser());
+//app.use(express.bodyParser());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+//app.use(express.session({ secret: 'keyboard cat' }));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+}))
 /*
 app.use(function(req, res, next) {
   console.log('-- session --');
@@ -29,8 +44,9 @@ app.use(function(req, res, next) {
 */
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(app.router);
-app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+//app.use(app.router);
+//app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+app.use(errorhandler({ dumpExceptions: true, showStack: true }));
 
 // Passport configuration
 

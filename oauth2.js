@@ -1,12 +1,18 @@
 /**
  * Module dependencies.
  */
+
 var oauth2orize = require('oauth2orize')
   , oauth2orize_ext = require('oauth2orize-openid') // require extentions.
   , passport = require('passport')
   , login = require('connect-ensure-login')
   , db = require('./db')
-  , utils = require('./utils');
+  , utils = require('./utils')
+  , dotenv = require('dotenv') 
+  , { generateIdToken, generateAccessToken , generateAuthorizationCode } = require('./tokengen')
+
+
+dotenv.config()
 
 // create OAuth 2.0 server
 var server = oauth2orize.createServer();
@@ -41,27 +47,31 @@ server.deserializeClient(function(id, done) {
 
 // id_token grant type.
 server.grant(oauth2orize_ext.grant.idToken(function(client, user, done){
-  var id_token;
-  // Do your lookup/token generation.
-  // ... id_token =
-
-  done(null, id_token);
+  try {
+    const id_token = generateIdToken(client, user);
+    done(null, id_token);
+  } catch (err) {
+    done(err);
+  }
 }));
 
 // 'id_token token' grant type.
 server.grant(oauth2orize_ext.grant.idTokenToken(
   function(client, user, done){
-    var token;
-    // Do your lookup/token generation.
-    // ... token =
-
-    done(null, token);
+    try {
+      const token = generateAccessToken(user, client,done);
+      done(null, token);
+    } catch (err) {
+      done(err);
+    }
   },
   function(client, user, req, done){
-    var id_token;
-    // Do your lookup/token generation.
-    // ... id_token =
-    done(null, id_token);
+    try {
+      const id_token = generateIdToken(client, user,done);
+      done(null, id_token);
+    } catch (err) {
+      done(err);
+    }
   }
 ));
 
@@ -70,57 +80,68 @@ server.grant(oauth2orize_ext.grant.idTokenToken(
 // 'code id_token' grant type.
 server.grant(oauth2orize_ext.grant.codeIdToken(
   function(client, redirect_uri, user, done){
-    var code;
-    // Do your lookup/token generation.
-    // ... code =
-
-    done(null, code);
+    try {
+      const code = generateAuthorizationCode(client, redirect_uri, user, done);
+      done(null, code);
+    } catch (err) {
+      done(err);
+    }
   },
   function(client, user, done){
-    var id_token;
-    // Do your lookup/token generation.
-    // ... id_token =
-    done(null, id_token);
+    try {
+      const id_token = generateIdToken(client, user, done);
+      done(null, id_token);
+    } catch (err) {
+      done(err);
+    }
   }
 ));
 
 // 'code token' grant type.
 server.grant(oauth2orize_ext.grant.codeToken(
   function(client, user, done){
-    var token;
-    // Do your lookup/token generation.
-    // ... id_token =
-    done(null, token);
+    try {
+      const token = generateAccessToken(user, client, done);
+      done(null, token);
+    } catch (err) {
+      done(err);
+    }
   },
   function(client, redirect_uri, user, done){
-    var code;
-    // Do your lookup/token generation.
-    // ... code =
-
-    done(null, code);
+    try {
+      const code = generateAuthorizationCode(client, redirect_uri, user, done);
+      done(null, code);
+    } catch (err) {
+      done(err);
+    }
   }
 ));
 
 // 'code id_token token' grant type.
 server.grant(oauth2orize_ext.grant.codeIdTokenToken(
  function(client, user, done){
-    var token;
-    // Do your lookup/token generation.
-    // ... id_token =
+  try {
+    const token = generateAccessToken(user, client, done);
     done(null, token);
+  } catch (err) {
+    done(err);
+  }
   },
   function(client, redirect_uri, user, done){
-    var code;
-    // Do your lookup/token generation.
-    // ... code =
-
-    done(null, code);
+    try {
+      const code = generateAuthorizationCode(client, redirect_uri, user, done);
+      done(null, code);
+    } catch (err) {
+      done(err);
+    }
   },
   function(client, user, done){
-    var id_token;
-    // Do your lookup/token generation.
-    // ... id_token =
-    done(null, id_token);
+    try {
+      const id_token = generateIdToken(client, user, done);
+      done(null, id_token);
+    } catch (err) {
+      done(err);
+    }
   }
 ));
 
