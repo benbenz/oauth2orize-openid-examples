@@ -62,6 +62,9 @@ app.get('/account', site.account);
 app.get('/dialog/authorize', oauth2.authorization);
 app.post('/dialog/authorize/decision', oauth2.decision);
 app.post('/oauth/token', oauth2.token);
+app.post('/oauth/refresh', oauth2.refresh);
+app.post('/token/claims', oauth2.claims);
+app.post('/token/verify', oauth2.verify);
 
 app.get('/api/userinfo', user.info);
 app.get('/api/clientinfo', client.info);

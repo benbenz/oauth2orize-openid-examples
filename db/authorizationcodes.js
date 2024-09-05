@@ -6,7 +6,21 @@ exports.find = function(key, done) {
   return done(null, code);
 };
 
-exports.save = function(code, clientID, redirectURI, userID, done) {
-  codes[code] = { clientID: clientID, redirectURI: redirectURI, userID: userID };
+exports.findByClientIdAndRedirect = function(clientId, redirect_uri, done) {
+  for(let code in codes) {
+    if(codes[code].clientId === clientId && codes[code].redirectURI === redirect_uri) {
+      return done(null, code);
+    }
+  }
+  return done(null, null);
+};
+
+exports.save = function(code, clientId, redirectURI, userId, done) {
+  codes[code] = { clientId: clientId, redirectURI: redirectURI, userId: userId };
+  return done(null);
+};
+
+exports.delete = function(code, done) {
+  delete codes[code]
   return done(null);
 };

@@ -5,7 +5,9 @@ var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy
   , BasicStrategy = require('passport-http').BasicStrategy
   , ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy
+  , ResourceOwnerPasswordStrategy = require('passport-oauth2-resource-owner-password').Strategy
   , BearerStrategy = require('passport-http-bearer').Strategy
+  , ClientIDStrategy = require('./clientidstrategy')
   , db = require('./db')
 
 
@@ -110,3 +112,43 @@ passport.use(new BearerStrategy(
     });
   }
 ));
+
+
+
+passport.use(new ResourceOwnerPasswordStrategy(
+  function(clientId, clientSecret, username, password, done) {
+    db.clients.findByClientId(clientId, function (err, client) {
+      // this strategy does not require clientSecret as it is intended to be used in cases
+      // (such as mobile apps) which are inherintly insecure
+
+      if (err) { return done(err); }
+      if (!client) { return done(null, false); }
+
+      db.users.findByUsername(username, function (err, user) {
+        if (err) { return done(err); }
+        if (!user) { return done(null, false); }
+        //if (hashsum(user.salt + password) !== user.secret) { return done(null, false); }
+        if( user.password != password ) { return done(null, false); }
+
+        var info = { scope: '*' }
+        return done(null, client, info);
+      })
+    });
+  }
+));
+
+
+// Define how to verify the clientId
+passport.use(new ClientIDStrategy(function(clientId, done) {
+  // Look up the client by clientId in the database
+  db.clients.findByClientId(clientId, function(err, client) {
+    if (err) {
+      return done(err);
+    }
+    if (!client) {
+      return done(null, false, { message: 'Unknown client ID' });
+    }
+    // Return the client object if found
+    return done(null, client);
+  });
+}));

@@ -1,6 +1,6 @@
 var users = [
-    { id: '1', username: 'bob', password: 'secret', name: 'Bob Smith' },
-    { id: '2', username: 'joe', password: 'password', name: 'Joe Davis' }
+    { id: '1', username: 'bob', password: 'secret', name: 'Bob Smith' , customClaims: null },
+    { id: '2', username: 'joe', password: 'password', name: 'Joe Davis' , customClaims: null }
 ];
 
 
@@ -23,3 +23,15 @@ exports.findByUsername = function(username, done) {
   }
   return done(null, null);
 };
+
+exports.addCustomClaims = function(id, customClaims, done) {
+  for (var i = 0, len = users.length; i < len; i++) {
+    var user = users[i];
+    if (user.id === id) {
+      user.customClaims = customClaims
+      return done(null, user);
+    }
+  }
+  return done(null, null);
+};
+
